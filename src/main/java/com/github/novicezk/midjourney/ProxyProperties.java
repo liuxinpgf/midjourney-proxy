@@ -152,11 +152,11 @@ public class ProxyProperties {
 		/**
 		 * 并发数.
 		 */
-		private int coreSize = 3;
+		private int coreSize = 16;
 		/**
 		 * 等待队列长度.
 		 */
-		private int queueSize = 10;
+		private int queueSize = 128;
 		/**
 		 * 任务超时时间(分钟).
 		 */
