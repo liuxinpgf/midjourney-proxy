@@ -117,7 +117,7 @@ public class ProxyProperties {
 		/**
 		 * 任务过期时间，默认30天.
 		 */
-		private Duration timeout = Duration.ofDays(30);
+		private Duration timeout = Duration.ofDays(1);
 		/**
 		 * 任务存储方式: redis(默认)、in_memory.
 		 */
