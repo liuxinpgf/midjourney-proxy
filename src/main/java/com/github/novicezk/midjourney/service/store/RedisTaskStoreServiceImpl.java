@@ -54,7 +54,7 @@ public class RedisTaskStoreServiceImpl implements TaskStoreService {
 			return Collections.emptyList();
 		}
 		ValueOperations<String, String> operations = this.redisTemplate.opsForValue();
-		return keys.stream().map(item ->  JSONObject.parseObject(item,Task.class))
+		return keys.stream().map(item ->  JSONObject.parseObject(operations.get(item),Task.class))
 				.filter(Objects::nonNull)
 				.toList();
 	}
