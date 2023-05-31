@@ -1,16 +1,28 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /mj
+spring:
+  redis:
+    host: 127.0.0.1
+    password: Pgf@920222
+    port: 6379
 mj:
   discord:
-    guild-id: xxx
-    channel-id: xxx
-    user-token: xxx
+    guild-id: 1096063557105356922
+    channel-id: 1111263964001734656
+    user-token: OTQ3Nzk3NTEwMjIxNjA2OTEy.GYPTP7.EzvJg23Q3hSwQE5HV_xYs6Yy5eMfkkfBc-nHU4
     user-wss: false
     user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36
-    bot-token: xxx
+    bot-token: MTExMTI2NjgyODMyOTY4OTE0OQ.G-it6g.nmq99zZJokQEXMAertFcBc_ynrnl2rirfRW4kg
   task-store:
-    type: in_memory
+    type: redis
     timeout: 30d
-  translate-way: null
+  translate-way: BAIDU
+  baidu-translate:
+    appid: 20230527001691287
+    app-secret: ehzIh6xAP8kIjPQ1jPPU
   queue:
     timeout-minutes: 5
-    core-size: 3
-    queue-size: 10
+    core-size: 16
+    queue-size: 128
