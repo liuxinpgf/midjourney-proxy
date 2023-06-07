@@ -121,7 +121,7 @@ public class ProxyProperties {
 		/**
 		 * 任务过期时间，默认30天.
 		 */
-		private Duration timeout = Duration.ofDays(30);
+		private Duration timeout = Duration.ofDays(1);
 		/**
 		 * 任务存储方式: redis(默认)、in_memory.
 		 */
@@ -172,11 +172,11 @@ public class ProxyProperties {
 		/**
 		 * 并发数.
 		 */
-		private int coreSize = 3;
+		private int coreSize = 16;
 		/**
 		 * 等待队列长度.
 		 */
-		private int queueSize = 10;
+		private int queueSize = 128;
 		/**
 		 * 任务超时时间(分钟).
 		 */

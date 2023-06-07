@@ -1,5 +1,6 @@
 package com.github.novicezk.midjourney.service.store;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.novicezk.midjourney.service.TaskStoreService;
 import com.github.novicezk.midjourney.support.Task;
 import com.github.novicezk.midjourney.support.TaskCondition;
@@ -20,16 +21,16 @@ public class RedisTaskStoreServiceImpl implements TaskStoreService {
 	private static final String KEY_PREFIX = "mj-task::";
 
 	private final Duration timeout;
-	private final RedisTemplate<String, Task> redisTemplate;
+	private final RedisTemplate<String, String> redisTemplate;
 
-	public RedisTaskStoreServiceImpl(Duration timeout, RedisTemplate<String, Task> redisTemplate) {
+	public RedisTaskStoreServiceImpl(Duration timeout, RedisTemplate<String, String> redisTemplate) {
 		this.timeout = timeout;
 		this.redisTemplate = redisTemplate;
 	}
 
 	@Override
 	public void save(Task task) {
-		this.redisTemplate.opsForValue().set(getRedisKey(task.getId()), task, this.timeout);
+		this.redisTemplate.opsForValue().set(getRedisKey(task.getId()), JSONObject.toJSONString(task), this.timeout);
 	}
 
 	@Override
@@ -39,7 +40,8 @@ public class RedisTaskStoreServiceImpl implements TaskStoreService {
 
 	@Override
 	public Task get(String id) {
-		return this.redisTemplate.opsForValue().get(getRedisKey(id));
+		String taskStr = this.redisTemplate.opsForValue().get(getRedisKey(id));
+		return JSONObject.parseObject(taskStr,Task.class);
 	}
 
 	@Override
@@ -51,8 +53,8 @@ public class RedisTaskStoreServiceImpl implements TaskStoreService {
 		if (keys == null || keys.isEmpty()) {
 			return Collections.emptyList();
 		}
-		ValueOperations<String, Task> operations = this.redisTemplate.opsForValue();
-		return keys.stream().map(operations::get)
+		ValueOperations<String, String> operations = this.redisTemplate.opsForValue();
+		return keys.stream().map(item ->  JSONObject.parseObject(operations.get(item),Task.class))
 				.filter(Objects::nonNull)
 				.toList();
 	}

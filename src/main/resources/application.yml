@@ -1,16 +1,24 @@
+spring:
+  redis:
+    host: 127.0.0.1
+    password: 
+    port: 6379
 mj:
   discord:
-    guild-id: xxx
-    channel-id: xxx
-    user-token: xxx
+    guild-id: 
+    channel-id: 
+    user-token: 
     user-wss: false
     user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36
-    bot-token: xxx
+    bot-token: 
   task-store:
-    type: in_memory
+    type: redis
     timeout: 30d
-  translate-way: null
+  translate-way: BAIDU
+  baidu-translate:
+    appid: 
+    app-secret: 
   queue:
     timeout-minutes: 5
-    core-size: 3
-    queue-size: 10
+    core-size: 16
+    queue-size: 128

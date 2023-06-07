@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
@@ -41,16 +42,19 @@ public class BeanConfig {
 		Duration timeout = proxyProperties.getTaskStore().getTimeout();
 		return switch (type) {
 			case IN_MEMORY -> new InMemoryTaskStoreServiceImpl(timeout);
-			case REDIS -> new RedisTaskStoreServiceImpl(timeout, taskRedisTemplate(redisConnectionFactory));
+			case REDIS -> new RedisTaskStoreServiceImpl(timeout, redisTemplate(redisConnectionFactory));
 		};
 	}
 
 	@Bean
-	RedisTemplate<String, Task> taskRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		RedisTemplate<String, Task> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(redisConnectionFactory);
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+	public RedisTemplate redisTemplate(RedisConnectionFactory factory) {
+		RedisTemplate redisTemplate = new RedisTemplate();
+		RedisSerializer stringSerializer = new StringRedisSerializer();
+		redisTemplate.setConnectionFactory(factory);
+		redisTemplate.setKeySerializer(stringSerializer);
+		redisTemplate.setValueSerializer(stringSerializer);
+		redisTemplate.setHashKeySerializer(stringSerializer);
+		redisTemplate.setHashValueSerializer(stringSerializer);
 		return redisTemplate;
 	}
 

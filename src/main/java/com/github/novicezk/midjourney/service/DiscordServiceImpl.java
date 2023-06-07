@@ -214,7 +214,9 @@ public class DiscordServiceImpl implements DiscordService {
 
 	private Message<Void> postJsonAndCheckStatus(String paramsStr) {
 		try {
+			log.info("postJsonAndCheckStatus req is {}" , paramsStr);
 			ResponseEntity<String> responseEntity = postJson(paramsStr);
+			log.info("postJsonAndCheckStatus res is {}" , com.alibaba.fastjson.JSONObject.toJSONString(responseEntity));
 			if (responseEntity.getStatusCode() == HttpStatus.NO_CONTENT) {
 				return Message.success();
 			}

@@ -28,7 +28,7 @@ public final class ReturnCode {
 	/**
 	 * 排队中.
 	 */
-	public static final int IN_QUEUE = 22;
+	public static final int IN_QUEUE = 2;
 	/**
 	 * 队列已满.
 	 */
