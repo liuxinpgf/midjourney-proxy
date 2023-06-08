@@ -144,9 +144,11 @@ public class TaskQueueHelper {
 					return;
 				}
 				future.cancel(true);
-				log.debug("task timeout, id: {}", task.getId());
 				task.fail("任务超时");
 				changeStatusAndNotify(task, TaskStatus.FAILURE);
+				log.info("task timeout, id: {}, status: {}", task.getId(), task.getStatus());
+				log.info("mj_event: {}", JSONObject.toJSONString(task));
+				redisTemplate.convertAndSend("mj_event", JSONObject.toJSONString(task));
 			} catch (Exception e) {
 				Thread.currentThread().interrupt();
 			}
