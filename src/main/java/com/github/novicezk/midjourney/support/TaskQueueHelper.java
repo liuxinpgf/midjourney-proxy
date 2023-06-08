@@ -114,9 +114,6 @@ public class TaskQueueHelper {
 				task.sleep();
 				changeStatusAndNotify(task, task.getStatus());
 			} while (task.getStatus() == TaskStatus.IN_PROGRESS);
-			log.info("task finished, id: {}, status: {}", task.getId(), task.getStatus());
-			log.info("mj_event: {}", JSONObject.toJSONString(task));
-			redisTemplate.convertAndSend("mj_event", JSONObject.toJSONString(task));
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		} catch (Exception e) {
@@ -147,8 +144,6 @@ public class TaskQueueHelper {
 				task.fail("任务超时");
 				changeStatusAndNotify(task, TaskStatus.FAILURE);
 				log.info("task timeout, id: {}, status: {}", task.getId(), task.getStatus());
-				log.info("mj_event: {}", JSONObject.toJSONString(task));
-				redisTemplate.convertAndSend("mj_event", JSONObject.toJSONString(task));
 			} catch (Exception e) {
 				Thread.currentThread().interrupt();
 			}
@@ -159,5 +154,10 @@ public class TaskQueueHelper {
 		task.setStatus(status);
 		this.taskStoreService.save(task);
 		this.notifyService.notifyTaskChange(task);
+		if(task.getStatus().equals(TaskStatus.SUCCESS) || task.getStatus().equals(TaskStatus.FAILURE)){
+			log.info("task finished, id: {}, status: {}", task.getId(), task.getStatus());
+			log.info("mj_event: {}", JSONObject.toJSONString(task));
+			redisTemplate.convertAndSend("mj_event", JSONObject.toJSONString(task));
+		}
 	}
 }
