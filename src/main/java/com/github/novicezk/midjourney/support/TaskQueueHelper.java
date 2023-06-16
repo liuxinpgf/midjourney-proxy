@@ -1,6 +1,7 @@
 package com.github.novicezk.midjourney.support;
 
 import cn.hutool.core.text.CharSequenceUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.github.novicezk.midjourney.ProxyProperties;
 import com.github.novicezk.midjourney.ReturnCode;
 import com.github.novicezk.midjourney.enums.TaskStatus;
@@ -9,6 +10,7 @@ import com.github.novicezk.midjourney.result.SubmitResultVO;
 import com.github.novicezk.midjourney.service.NotifyService;
 import com.github.novicezk.midjourney.service.TaskStoreService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +33,8 @@ public class TaskQueueHelper {
 	private TaskStoreService taskStoreService;
 	@Resource
 	private NotifyService notifyService;
+	@Resource
+	private RedisTemplate redisTemplate;
 
 	private final ThreadPoolTaskExecutor taskExecutor;
 	private final List<Task> runningTasks;
@@ -103,7 +107,6 @@ public class TaskQueueHelper {
 				task.sleep();
 				changeStatusAndNotify(task, task.getStatus());
 			} while (task.getStatus() == TaskStatus.IN_PROGRESS);
-			log.debug("task finished, id: {}, status: {}", task.getId(), task.getStatus());
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		} catch (Exception e) {
@@ -120,5 +123,10 @@ public class TaskQueueHelper {
 		task.setStatus(status);
 		this.taskStoreService.save(task);
 		this.notifyService.notifyTaskChange(task);
+		if(task.getStatus().equals(TaskStatus.SUCCESS) || task.getStatus().equals(TaskStatus.FAILURE)){
+			log.info("task finished, id: {}, status: {}", task.getId(), task.getStatus());
+			log.info("mj_event: {}", JSONObject.toJSONString(task));
+			redisTemplate.convertAndSend("mj_event", JSONObject.toJSONString(task));
+		}
 	}
 }
